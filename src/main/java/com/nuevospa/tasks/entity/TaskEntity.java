@@ -1,13 +1,16 @@
 package com.nuevospa.tasks.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
-@Table(name = "tasks")
+@Table(name = "tareas")
 @Getter
 @Setter
+//TODO: pasa algo con builder?
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class TaskEntity {
 
     @Id

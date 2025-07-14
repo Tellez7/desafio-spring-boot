@@ -8,7 +8,7 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-@Table(name = "task_status")
+@Table(name = "estados_tarea")
 public class TaskStatusEntity {
 
     @Id

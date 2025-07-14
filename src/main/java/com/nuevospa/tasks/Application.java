@@ -21,6 +21,5 @@ public class Application {
         //TODO: check
         System.out.println("PASSSS");
         System.out.println(new BCryptPasswordEncoder().encode("admin123"));
-
     }
 }
