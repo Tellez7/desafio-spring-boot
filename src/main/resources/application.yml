@@ -1,13 +1,16 @@
 spring:
+  datasource:
+    url: jdbc:h2:mem:tasksdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
   h2:
     console:
       enabled: true
-  datasource:
-    url: jdbc:h2:mem:tasksdb;DB_CLOSE_DELAY=-1
-    username: sa
-    password:
   jpa:
-    hibernate.ddl-auto: create-drop
+    hibernate:
+      ddl-auto: create
+    defer-datasource-initialization: true
     show-sql: true
     properties:
       hibernate.format_sql: true
