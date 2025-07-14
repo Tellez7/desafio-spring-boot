@@ -1,10 +1,10 @@
-package com.nuevospa.tareas.service;
+package com.nuevospa.tasks.service;
 
-import com.nuevospa.tareas.model.TaskDto;
-import com.nuevospa.tareas.entity.TaskEntity;
-import com.nuevospa.tareas.repository.TaskRepository;
-import com.nuevospa.tareas.repository.TaskStatusRepository;
-import com.nuevospa.tareas.repository.UserRepository;
+import com.nuevospa.tasks.model.TaskDto;
+import com.nuevospa.tasks.entity.TaskEntity;
+import com.nuevospa.tasks.repository.TaskRepository;
+import com.nuevospa.tasks.repository.TaskStatusRepository;
+import com.nuevospa.tasks.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -14,12 +14,12 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TaskService {
 
-    private final TaskRepository repo;
+    private final TaskRepository repository;
     private final TaskStatusRepository statusRepo;
     private final UserRepository userRepo;
 
     public List<TaskDto> findAll(String username) {
-        return repo.findByOwnerUsernameOrderByIdAsc(username)
+        return repository.findByOwnerUsernameOrderByIdAsc(username)
                 .stream()
                 .map(this::toDto)
                 .toList();
@@ -29,9 +29,9 @@ public class TaskService {
         TaskEntity entity = new TaskEntity();
         entity.setTitle(dto.getTitle());
         entity.setDescription(dto.getDescription());
-        entity.setStatus(statusRepo.getReferenceById(dto.getStatus().getId()));
-        entity.setOwner(userRepo.findByUsername(username).orElseThrow());
-        return toDto(repo.save(entity));
+        //entity.setStatus(statusRepo.getReferenceById(dto.getStatus().getId()));
+        //entity.setOwner(userRepo.findByUsername(username).orElseThrow());
+        return toDto(repository.save(entity));
     }
 
     private TaskDto toDto(TaskEntity entity) {

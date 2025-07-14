@@ -1,11 +1,11 @@
-package com.nuevospa.tareas.entity;
+package com.nuevospa.tasks.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table(name = "tareas")
+@Table(name = "tasks")
 @Getter
 @Setter
 public class TaskEntity {

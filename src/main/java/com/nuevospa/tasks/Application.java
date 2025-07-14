@@ -1,4 +1,4 @@
-package com.nuevospa.tareas;
+package com.nuevospa.tasks;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -18,6 +18,7 @@ public class Application {
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
 
+        //TODO: check
         System.out.println("PASSSS");
         System.out.println(new BCryptPasswordEncoder().encode("admin123"));
 

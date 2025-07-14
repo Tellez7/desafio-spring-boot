@@ -1,7 +1,7 @@
-package com.nuevospa.tareas.service;
+package com.nuevospa.tasks.service;
 
-import com.nuevospa.tareas.entity.UserEntity;
-import com.nuevospa.tareas.repository.UserRepository;
+import com.nuevospa.tasks.entity.UserEntity;
+import com.nuevospa.tasks.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Primary;
 import org.springframework.security.core.userdetails.User;
@@ -18,15 +18,14 @@ public class JpaUserDetailsService implements UserDetailsService {
     private final UserRepository userRepo;
 
     @Override
-    public UserDetails loadUserByUsername(String username)
-            throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
-        UserEntity ue = userRepo.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
+        //TODO: check message
+        UserEntity userEntity = userRepo.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
 
-        return User.withUsername(ue.getUsername())
-                .password(ue.getPassword())       // BCrypt hash
-                .roles(ue.getRole().replace("ROLE_", ""))
+        return User.withUsername(userEntity.getUsername())
+                .password(userEntity.getPassword())       // BCrypt hash
+                .roles(userEntity.getRole().replace("ROLE_", ""))
                 .build();
     }
 }

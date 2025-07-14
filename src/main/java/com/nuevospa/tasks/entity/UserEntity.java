@@ -1,11 +1,12 @@
-package com.nuevospa.tareas.entity;
+package com.nuevospa.tasks.entity;
 
+//TDO: check
 import jakarta.persistence.*;
 import lombok.Data;
 
 @Entity
 @Data
-@Table(name = "usuarios")
+@Table(name = "users")
 public class UserEntity {
 
     @Id

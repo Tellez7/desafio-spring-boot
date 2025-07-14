@@ -1,4 +1,4 @@
-package com.nuevospa.tareas.model;
+package com.nuevospa.tasks.model;
 
 import lombok.*;
 

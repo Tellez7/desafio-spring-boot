@@ -1,4 +1,4 @@
-package com.nuevospa.tareas.model;
+package com.nuevospa.tasks.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;
@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 /**
  * Datos de entrada para /auth/login.
  */
+//TODO: check
 public record AuthRequest(
 
         @NotBlank

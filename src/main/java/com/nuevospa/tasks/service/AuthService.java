@@ -1,9 +1,9 @@
-package com.nuevospa.tareas.service;
+package com.nuevospa.tasks.service;
 
-import com.nuevospa.tareas.entity.UserEntity;
-import com.nuevospa.tareas.model.AuthRequest;
-import com.nuevospa.tareas.model.AuthResponse;
-import com.nuevospa.tareas.repository.UserRepository;
+import com.nuevospa.tasks.entity.UserEntity;
+import com.nuevospa.tasks.model.AuthRequest;
+import com.nuevospa.tasks.model.AuthResponse;
+import com.nuevospa.tasks.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -26,8 +26,7 @@ public class AuthService {
     public AuthResponse authenticate(String username, String rawPassword) {
 
         // 1) Delegamos la verificación de credenciales al AuthenticationManager
-        Authentication auth = authManager.authenticate(
-                new UsernamePasswordAuthenticationToken(username, rawPassword));
+        Authentication auth = authManager.authenticate(new UsernamePasswordAuthenticationToken(username, rawPassword));
 
         // 2) Al llegar aquí las credenciales son correctas
         var userDetails = (org.springframework.security.core.userdetails.User) auth.getPrincipal();
@@ -44,6 +43,7 @@ public class AuthService {
        ------------------------------------------------------------------ */
     public void register(AuthRequest req) {
         if (userRepo.existsByUsername(req.username())) {
+            //TODO: check message
             throw new IllegalArgumentException("El usuario ya existe");
         }
         UserEntity entity = new UserEntity();

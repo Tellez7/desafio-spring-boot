@@ -1,8 +1,8 @@
-package com.nuevospa.tareas.controller;
+package com.nuevospa.tasks.controller;
 
-import com.nuevospa.tareas.model.AuthRequest;
-import com.nuevospa.tareas.model.AuthResponse;
-import com.nuevospa.tareas.service.AuthService;
+import com.nuevospa.tasks.model.AuthRequest;
+import com.nuevospa.tasks.model.AuthResponse;
+import com.nuevospa.tasks.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 //TODO: colocar api
-@RequestMapping("/auth")
+@RequestMapping("/api/auth")
 @RequiredArgsConstructor
 public class AuthController {
 

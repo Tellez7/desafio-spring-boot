@@ -1,7 +1,7 @@
-package com.nuevospa.tareas.controller;
+package com.nuevospa.tasks.controller;
 
-import com.nuevospa.tareas.model.TaskDto;
-import com.nuevospa.tareas.service.TaskService;
+import com.nuevospa.tasks.model.TaskDto;
+import com.nuevospa.tasks.service.TaskService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -12,12 +12,13 @@ import java.util.List;
 
 @RestController
 //TODO: colocar api
-@RequestMapping("/tasks")
+@RequestMapping("/api/tasks")
 @RequiredArgsConstructor
 public class TaskController {
 
   private final TaskService service;
 
+  //TODO: check principal
   @GetMapping
   public List<TaskDto> list(Principal principal) {
     return service.findAll(principal.getName());

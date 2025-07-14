@@ -1,4 +1,4 @@
-package com.nuevospa.tareas.service;
+package com.nuevospa.tasks.service;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -40,6 +40,7 @@ public class JwtService {
      * Genera un JWT con claims opcionales
      */
     public String generateToken(UserDetails user, Map<String, Object> extraClaims) {
+        //TODO: check
         Instant now = Instant.now();
         return Jwts.builder()
                 .claims(extraClaims)

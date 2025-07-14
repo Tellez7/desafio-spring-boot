@@ -1,6 +1,6 @@
-package com.nuevospa.tareas.repository;
+package com.nuevospa.tasks.repository;
 
-import com.nuevospa.tareas.entity.UserEntity;
+import com.nuevospa.tasks.entity.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

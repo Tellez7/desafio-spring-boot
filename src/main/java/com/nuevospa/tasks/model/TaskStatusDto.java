@@ -1,5 +1,6 @@
-package com.nuevospa.tareas.model;
+package com.nuevospa.tasks.model;
 
+//TODO: check
 import lombok.*;
 
 @Data
