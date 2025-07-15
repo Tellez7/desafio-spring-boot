@@ -76,6 +76,7 @@ Se evaluará la solución en función de los siguientes criterios:
 - /api/auth/login valida que el login sea correcto
 - Se hace una validacion por username y password, si el usuario esta en bd hace login ya arroja el token, de lo contrario lanza una exception, ya sea si no ecncuentra el usuario o por credenciales incorrectas
 - Se cuenta con un enum que valida 2 roles [ADMIN, USER]
+- Cada endpoint ya tiene el token como header, solo es consultar el token y se carga automatico en cada endpoint
 
 ### Task:
 - /api/tasks hay varios endpoints para consulta y escritura, se pueden listar todas las tareas, por id o por estado del usuario loggeado
@@ -93,3 +94,5 @@ Se evaluará la solución en función de los siguientes criterios:
 - se precargan 2 usuarios [esteban:ADMIN, mateo:USER]
 
 NOTA: Cabe resaltar que cada endpoint tiene su propia validacion de campos, campo no encontrado, acualizado, obtenido, etc
+
+### Adjunto coleccion hecha en insomnia resources/API_Tareas.json
