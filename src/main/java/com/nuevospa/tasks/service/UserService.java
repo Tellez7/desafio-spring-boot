@@ -2,6 +2,7 @@ package com.nuevospa.tasks.service;
 
 import com.nuevospa.tasks.entity.UserEntity;
 import com.nuevospa.tasks.model.UserDto;
+import com.nuevospa.tasks.util.Role;
 
 import java.util.List;
 import java.util.Map;
@@ -11,6 +12,8 @@ public interface UserService {
     List<UserDto> findAll(int page, int size);
 
     UserDto findById(Long id);
+
+    List<UserDto> findAllByRole(int page, int size, Role role);
 
     UserDto findByUsername(String username);
 

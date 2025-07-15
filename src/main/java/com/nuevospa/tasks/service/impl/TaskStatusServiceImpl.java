@@ -5,6 +5,7 @@ import com.nuevospa.tasks.exception.ResourceNotFoundException;
 import com.nuevospa.tasks.model.TaskStatusDto;
 import com.nuevospa.tasks.repository.TaskStatusRepository;
 import com.nuevospa.tasks.service.TaskStatusService;
+import com.nuevospa.tasks.util.TaskStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -32,10 +33,9 @@ public class TaskStatusServiceImpl implements TaskStatusService {
                 .orElseThrow(() -> new ResourceNotFoundException("Estado " + id + " no encontrado"));
     }
 
-    //TODO: validar enum
     @Override
     public TaskStatusDto findByName(String name) {
-        return taskStatusRepo.findByName(name)
+        return taskStatusRepo.findByName(TaskStatus.valueOf(name))
                 .map(this::entityToDto)
                 .orElseThrow(() -> new ResourceNotFoundException("Estado " + name + " no encontrado"));
     }
@@ -59,19 +59,17 @@ public class TaskStatusServiceImpl implements TaskStatusService {
         TaskStatusDto taskFound = findById(id);
 
         if (changes.containsKey("name")) {
-            taskFound.setName((String) changes.get("name"));
+            taskFound.setName(TaskStatus.valueOf((String) changes.get("name")));
         }
         return entityToDto(taskStatusRepo.save(dtoToEntity(taskFound)));
     }
 
-    //TODO: check cuando esta ligado a tarea
     @Override
     public void delete(Long id, String username) {
         TaskStatusDto taskFound = findById(id);
         taskStatusRepo.delete(dtoToEntity(taskFound));
     }
 
-    //TODO: mapper
     public TaskStatusDto entityToDto(TaskStatusEntity entity) {
         return TaskStatusDto.builder()
                 .id(entity.getId())

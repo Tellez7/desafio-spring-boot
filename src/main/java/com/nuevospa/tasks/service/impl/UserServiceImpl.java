@@ -6,21 +6,25 @@ import com.nuevospa.tasks.exception.ResourceNotFoundException;
 import com.nuevospa.tasks.model.UserDto;
 import com.nuevospa.tasks.repository.UserRepository;
 import com.nuevospa.tasks.service.UserService;
+import com.nuevospa.tasks.util.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
 
+import static com.nuevospa.tasks.util.Role.USER;
+
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-    private final PasswordEncoder encoder;         // BCrypt
+    private final PasswordEncoder encoder;
 
     @Override
     public List<UserDto> findAll(int page, int size) {
@@ -36,6 +40,15 @@ public class UserServiceImpl implements UserService {
         return userRepository.findById(id)
                 .map(this::entityToDto)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario " + id + " no encontrado"));
+    }
+
+    @Override
+    public List<UserDto> findAllByRole(int page, int size, Role role) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
+        return userRepository.findByRole(role, pageable)
+                .stream()
+                .map(this::entityToDto)
+                .toList();
     }
 
     @Override
@@ -57,8 +70,7 @@ public class UserServiceImpl implements UserService {
         if (dto.getRole() != null) {
             entity.setRole(dto.getRole());
         } else {
-            //TODO: check enum
-            entity.setRole("USER");
+            entity.setRole(USER);
         }
         return entityToDto(userRepository.save(entity));
     }
@@ -82,7 +94,7 @@ public class UserServiceImpl implements UserService {
             userFound.setPassword((String) changes.get("password"));
         }
         if (changes.containsKey("role")) {
-            userFound.setRole((String) changes.get("role"));
+            userFound.setRole(Role.valueOf((String) changes.get("role")));
         }
         return entityToDto(userRepository.save(dtoToEntity(userFound)));
     }
@@ -93,7 +105,6 @@ public class UserServiceImpl implements UserService {
         userRepository.delete(dtoToEntity(userFound));
     }
 
-    //TODO: mapper
     @Override
     public UserDto entityToDto(UserEntity entity) {
         return UserDto.builder()

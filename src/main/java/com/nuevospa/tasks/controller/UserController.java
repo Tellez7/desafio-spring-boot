@@ -3,6 +3,7 @@ package com.nuevospa.tasks.controller;
 import com.nuevospa.tasks.model.TaskStatusDto;
 import com.nuevospa.tasks.model.UserDto;
 import com.nuevospa.tasks.service.UserService;
+import com.nuevospa.tasks.util.Role;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -66,6 +67,21 @@ public class UserController {
     @PreAuthorize("hasRole('ADMIN')")
     public UserDto findById(@PathVariable Long id) {
         return userService.findById(id);
+    }
+
+    @Operation(
+            summary = "Listar usuarios por rol",
+            description = "Devuelve todas los usuarios po rol"
+    )
+    @ApiResponse(responseCode = "200",
+            description = "Lista de usuarios por rol",
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = UserDto.class))))
+    @GetMapping("/role/{role}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public List<UserDto> findAllByRole(@RequestParam(defaultValue = "0") int page,
+                                       @RequestParam(defaultValue = "20") int size,
+                                       @PathVariable Role role) {
+        return userService.findAllByRole(page, size, role);
     }
 
     @Operation(

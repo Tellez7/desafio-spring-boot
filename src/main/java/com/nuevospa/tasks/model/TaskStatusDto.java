@@ -1,6 +1,7 @@
 package com.nuevospa.tasks.model;
 
-import jakarta.validation.constraints.NotBlank;
+import com.nuevospa.tasks.util.TaskStatus;
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -11,6 +12,6 @@ import lombok.Setter;
 public class TaskStatusDto {
 
     private Long id;
-    @NotBlank
-    private String name;
+    @NotNull
+    private TaskStatus name;
 }

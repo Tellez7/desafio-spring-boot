@@ -22,7 +22,7 @@ public class JpaUserDetailsServiceImpl implements UserDetailsService {
         UserEntity userEntity = userRepo.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
         return User.withUsername(userEntity.getUsername())
                 .password(userEntity.getPassword())
-                .roles(userEntity.getRole().replace("ROLE_", ""))
+                .roles(userEntity.getRole().name())
                 .build();
     }
 }

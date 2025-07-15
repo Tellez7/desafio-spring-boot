@@ -10,6 +10,7 @@ import com.nuevospa.tasks.repository.TaskRepository;
 import com.nuevospa.tasks.service.TaskService;
 import com.nuevospa.tasks.service.TaskStatusService;
 import com.nuevospa.tasks.service.UserService;
+import com.nuevospa.tasks.util.TaskStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -18,6 +19,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+
+import static com.nuevospa.tasks.util.TaskStatus.TODO;
 
 @Service
 @RequiredArgsConstructor
@@ -49,7 +52,7 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public List<TaskDto> findAllByUsernameAndStatus(int page, int size, String username, String status) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
-        return taskRepository.findByUserUsernameAndStatusName(username, status, pageable)
+        return taskRepository.findByUserUsernameAndStatusName(username, TaskStatus.valueOf(status), pageable)
                 .stream()
                 .map(this::entityToDto)
                 .toList();
@@ -63,9 +66,9 @@ public class TaskServiceImpl implements TaskService {
 
         TaskStatusDto taskDto;
         if (dto.getStatus() != null) {
-            taskDto = taskStatusService.findByName(dto.getStatus().getName());
+            taskDto = taskStatusService.findByName(dto.getStatus().getName().name());
         } else {
-            taskDto = taskStatusService.findByName("TODO");
+            taskDto = taskStatusService.findByName(TODO.name());
         }
         entity.setStatus(taskStatusService.dtoToEntity(taskDto));
 
@@ -82,7 +85,7 @@ public class TaskServiceImpl implements TaskService {
         taskFound.setDescription(dto.getDescription());
 
         if (dto.getStatus() != null) {
-            taskFound.setStatus(taskStatusService.findByName(dto.getStatus().getName()));
+            taskFound.setStatus(taskStatusService.findByName(dto.getStatus().getName().name()));
         }
         if (dto.getUser() != null) {
             taskFound.setUser(userService.findByUsername(dto.getUser().getUsername()));
@@ -125,13 +128,12 @@ public class TaskServiceImpl implements TaskService {
         }
     }
 
-    //TODO: mapper
     private TaskDto entityToDto(TaskEntity entity) {
         return TaskDto.builder()
                 .id(entity.getId())
                 .title(entity.getTitle())
                 .description(entity.getDescription())
-                .status(taskStatusService.findByName(entity.getStatus().getName()))
+                .status(taskStatusService.findByName(entity.getStatus().getName().name()))
                 .user(userService.findByUsername(entity.getUser().getUsername()))
                 .build();
     }
