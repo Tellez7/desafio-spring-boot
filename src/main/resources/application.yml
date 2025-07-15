@@ -11,6 +11,7 @@ spring:
     hibernate:
       ddl-auto: create
     defer-datasource-initialization: true
+    #TODO:check
     show-sql: true
     properties:
       hibernate.format_sql: true
@@ -20,4 +21,7 @@ jwt:
   expiration: 3600000  # 1 hora
 
 api:
-  path: /api/tasks
+  path-auth: /api/auth
+  path-tasks: /api/tasks
+  path-task-statuses: /api/statuses
+  path-users: /api/users

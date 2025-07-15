@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("${api.path}")
+@RequestMapping("${api.path-tasks}")
 @RequiredArgsConstructor
 public class TaskController {
 
@@ -68,9 +68,9 @@ public class TaskController {
     })
     @PostMapping
     public ResponseEntity<TaskDto> createTask(
-            @Valid @RequestBody TaskDto taskDto,
-            @AuthenticationPrincipal UserDetails principal) {
-        TaskDto created = taskService.createTask(taskDto, principal.getUsername());
+            @Valid @RequestBody TaskDto taskDto, @
+            AuthenticationPrincipal UserDetails loggedUser) {
+        TaskDto created = taskService.createTask(taskDto, loggedUser.getUsername());
         return ResponseEntity
                 .created(URI.create("/api/tasks/" + created.getId()))
                 .body(created);
@@ -91,8 +91,8 @@ public class TaskController {
     public ResponseEntity<TaskDto> updateTask(
             @PathVariable Long id,
             @Valid @RequestBody TaskDto taskDto,
-            @AuthenticationPrincipal UserDetails principal) {
-        TaskDto updated = taskService.updateTask(id, taskDto, principal.getUsername());
+            @AuthenticationPrincipal UserDetails loggedUser) {
+        TaskDto updated = taskService.updateTask(id, taskDto, loggedUser.getUsername());
         return ResponseEntity.ok(updated);
     }
 
@@ -108,8 +108,10 @@ public class TaskController {
                     content = @Content)
     })
     @PatchMapping(value = "/{id}", consumes = "application/merge-patch+json")
-    public ResponseEntity<TaskDto> updatePartially(@PathVariable Long id, @RequestBody Map<String, Object> changes) {
-        TaskDto updated = taskService.patchTask(id, changes);
+    public ResponseEntity<TaskDto> patchTask(@PathVariable Long id,
+                                             @RequestBody Map<String, Object> changes,
+                                             @AuthenticationPrincipal UserDetails loggedUser) {
+        TaskDto updated = taskService.patchTask(id, changes, loggedUser.getUsername());
         return ResponseEntity.ok(updated);
     }
 
@@ -125,8 +127,8 @@ public class TaskController {
                     content = @Content)
     })
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteTask(@PathVariable Long id, @AuthenticationPrincipal UserDetails principal) {
-        taskService.deleteTask(id, principal.getUsername());
+    public ResponseEntity<Void> deleteTask(@PathVariable Long id, @AuthenticationPrincipal UserDetails loggedUser) {
+        taskService.deleteTask(id, loggedUser.getUsername());
         return ResponseEntity.noContent().build();
     }
 }

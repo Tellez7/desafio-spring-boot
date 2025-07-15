@@ -25,5 +25,5 @@ public class TaskEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    private UserEntity owner;
+    private UserEntity user;
 }

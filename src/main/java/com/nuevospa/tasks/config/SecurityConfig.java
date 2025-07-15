@@ -1,5 +1,6 @@
 package com.nuevospa.tasks.config;
 
+import com.nuevospa.tasks.exception.JsonAccessDeniedHandler;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,10 +28,20 @@ public class SecurityConfig {
         return http
                 .headers(h -> h.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
                 .csrf(AbstractHttpConfigurer::disable)
+                //TODO: que es STATELESS
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**", "/swagger-ui/**", "/v3/api-docs/**", "/h2-console/**").permitAll()
-                        .anyRequest().authenticated())
+                        .requestMatchers("/api/auth/**", "/swagger-ui/**", "/v3/api-docs/**", "/h2-console/**")
+                        //.hasRole("ADMIN")
+                        .permitAll()
+                        //TODO: check
+                        /*.requestMatchers(HttpMethod.GET, "/tasks/**")
+                        .hasAnyRole("USER", "ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/tasks/**")
+                        .hasRole("ADMIN")*/
+                        .anyRequest()
+                        .authenticated())
+                .exceptionHandling(config -> config.accessDeniedHandler(new JsonAccessDeniedHandler()))
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }

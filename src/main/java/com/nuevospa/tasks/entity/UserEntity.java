@@ -2,10 +2,16 @@ package com.nuevospa.tasks.entity;
 
 //TDO: check
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "usuarios")
 public class UserEntity {
 

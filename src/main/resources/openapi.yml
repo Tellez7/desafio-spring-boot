@@ -13,14 +13,14 @@ components:
       bearerFormat: JWT
 
   schemas:
-    # <<< AÑADE AQUÍ >>>
+    # <<< TODO: Check >>>
     AuthRequest:
       type: object
       required: [ username, password ]
       properties:
         username:
           type: string
-          example: admin
+          example: esteban
         password:
           type: string
           example: admin123

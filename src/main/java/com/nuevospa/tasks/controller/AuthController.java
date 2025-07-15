@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 //TODO: colocar api
-@RequestMapping("/api/auth")
+@RequestMapping("${api.path-auth}")
 @RequiredArgsConstructor
 public class AuthController {
 
