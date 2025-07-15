@@ -11,12 +11,12 @@ public interface TaskService {
 
     TaskDto findById(Long id);
 
-    TaskDto createTask(TaskDto dto, String username);
+    TaskDto create(TaskDto dto, String username);
 
-    TaskDto updateTask(Long id, TaskDto dto, String username);
+    TaskDto update(Long id, TaskDto dto, String username);
 
-    TaskDto patchTask(Long id, Map<String, Object> changes, String username);
+    TaskDto patch(Long id, Map<String, Object> changes, String username);
 
-    void deleteTask(Long id, String username);
+    void delete(Long id, String username);
 
 }

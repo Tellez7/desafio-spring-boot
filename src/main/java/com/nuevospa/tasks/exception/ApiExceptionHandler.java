@@ -2,8 +2,15 @@ package com.nuevospa.tasks.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @RestControllerAdvice
 public class ApiExceptionHandler {
@@ -32,7 +39,17 @@ public class ApiExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
     }
 
-    //TODO: check
-    //Puedes añadir más @ExceptionHandler para 400, 500, etc.
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Map<String, List<String>> handleValidationErrors(MethodArgumentNotValidException ex) {
+
+        Map<String, List<String>> errors = new HashMap<>();
+
+        ex.getBindingResult().getFieldErrors().forEach(err -> {
+            errors.computeIfAbsent(err.getField(), key -> new ArrayList<>())
+                    .add(err.getDefaultMessage());
+        });
+        return errors;
+    }
 }
 

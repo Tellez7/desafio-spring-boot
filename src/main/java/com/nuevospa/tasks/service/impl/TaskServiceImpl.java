@@ -40,12 +40,17 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public TaskDto createTask(TaskDto dto, String username) {
+    public TaskDto create(TaskDto dto, String username) {
         TaskEntity entity = new TaskEntity();
         entity.setTitle(dto.getTitle());
         entity.setDescription(dto.getDescription());
 
-        TaskStatusDto taskDto = taskStatusService.findByName(dto.getStatus().getName());
+        TaskStatusDto taskDto;
+        if (dto.getStatus() != null) {
+            taskDto = taskStatusService.findByName(dto.getStatus().getName());
+        } else {
+            taskDto = taskStatusService.findByName("TODO");
+        }
         entity.setStatus(taskStatusService.dtoToEntity(taskDto));
 
         UserDto userDto = userService.findByUsername(username);
@@ -55,12 +60,11 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public TaskDto updateTask(Long id, TaskDto dto, String username) {
+    public TaskDto update(Long id, TaskDto dto, String username) {
         TaskDto taskFound = findById(id);
 
         validateTaskOwner(taskFound, username);
 
-        //TODO: validar si es igual
         taskFound.setTitle(dto.getTitle());
         taskFound.setDescription(dto.getDescription());
 
@@ -74,39 +78,33 @@ public class TaskServiceImpl implements TaskService {
         return entityToDto(taskRepository.save(dtoToEntity(taskFound)));
     }
 
-    //TODO: validar header y map
     @Override
-    public TaskDto patchTask(Long id, Map<String, Object> changes, String username) {
+    public TaskDto patch(Long id, Map<String, Object> changes, String username) {
         TaskDto taskFound = findById(id);
 
         validateTaskOwner(taskFound, username);
 
-        //TODO: cambiar por generico
         if (changes.containsKey("title")) {
             taskFound.setTitle((String) changes.get("title"));
         }
-
         if (changes.containsKey("description")) {
             taskFound.setDescription((String) changes.get("description"));
         }
-
         if (changes.containsKey("status")) {
             Map<?, ?> statusMap = (Map<?, ?>) changes.get("status");
             String name = ((String) statusMap.get("name"));
             taskFound.setStatus(taskStatusService.findByName(name));
         }
-
         if (changes.containsKey("user")) {
             Map<?, ?> userMap = (Map<?, ?>) changes.get("user");
             String user = ((String) userMap.get("username"));
             taskFound.setUser(userService.findByUsername(user));
         }
-
         return entityToDto(taskRepository.save(dtoToEntity(taskFound)));
     }
 
     @Override
-    public void deleteTask(Long id, String username) {
+    public void delete(Long id, String username) {
         TaskDto taskFound = findById(id);
         validateTaskOwner(taskFound, username);
         taskRepository.delete(dtoToEntity(taskFound));
@@ -134,12 +132,12 @@ public class TaskServiceImpl implements TaskService {
         TaskStatusDto taskStatusDto = taskStatusService.findById(dto.getStatus().getId());
         UserDto userDto = userService.findById(dto.getUser().getId());
 
-        return TaskEntity.builder()
-                .id(dto.getId())
-                .title(dto.getTitle())
-                .description(dto.getDescription())
-                .status(taskStatusService.dtoToEntity(taskStatusDto))
-                .user(userService.dtoToEntity(userDto))
-                .build();
+        TaskEntity entity = new TaskEntity();
+        entity.setId(dto.getId());
+        entity.setTitle(dto.getTitle());
+        entity.setDescription(dto.getDescription());
+        entity.setStatus(taskStatusService.dtoToEntity(taskStatusDto));
+        entity.setUser(userService.dtoToEntity(userDto));
+        return entity;
     }
 }

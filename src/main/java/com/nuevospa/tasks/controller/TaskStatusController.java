@@ -14,7 +14,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.net.URI;
 import java.util.List;
@@ -69,8 +77,10 @@ public class TaskStatusController {
     })
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<TaskStatusDto> createTaskStatus(@Valid @RequestBody TaskStatusDto taskStatusDto) {
-        TaskStatusDto created = taskStatusService.createTaskStatus(taskStatusDto);
+    //TODO: check
+    //@PreAuthorize("hasRole('ADMIN') or (hasRole('USER') and #id == principal.id)")
+    public ResponseEntity<TaskStatusDto> create(@Valid @RequestBody TaskStatusDto taskStatusDto) {
+        TaskStatusDto created = taskStatusService.create(taskStatusDto);
         return ResponseEntity
                 .created(URI.create("/api/statuses/" + created.getId()))
                 .body(created);
@@ -89,11 +99,11 @@ public class TaskStatusController {
     })
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<TaskStatusDto> updateTaskStatus(
+    public ResponseEntity<TaskStatusDto> update(
             @PathVariable Long id,
-            @Valid @RequestBody TaskStatusDto taskStatusDto,
+            @RequestBody TaskStatusDto taskStatusDto,
             @AuthenticationPrincipal UserDetails loggedUser) {
-        TaskStatusDto updated = taskStatusService.updateTaskStatus(id, taskStatusDto, loggedUser.getUsername());
+        TaskStatusDto updated = taskStatusService.update(id, taskStatusDto, loggedUser.getUsername());
         return ResponseEntity.ok(updated);
     }
 
@@ -110,10 +120,10 @@ public class TaskStatusController {
     })
     @PatchMapping(value = "/{id}", consumes = "application/merge-patch+json")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<TaskStatusDto> patchTaskStatus(@PathVariable Long id,
-                                                         @RequestBody Map<String, Object> changes,
-                                                         @AuthenticationPrincipal UserDetails loggedUser) {
-        TaskStatusDto updated = taskStatusService.patchTaskStatus(id, changes, loggedUser.getUsername());
+    public ResponseEntity<TaskStatusDto> patch(@PathVariable Long id,
+                                               @RequestBody Map<String, Object> changes,
+                                               @AuthenticationPrincipal UserDetails loggedUser) {
+        TaskStatusDto updated = taskStatusService.patch(id, changes, loggedUser.getUsername());
         return ResponseEntity.ok(updated);
     }
 
@@ -130,8 +140,8 @@ public class TaskStatusController {
     })
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Void> deleteTaskStatus(@PathVariable Long id, @AuthenticationPrincipal UserDetails loggedUser) {
-        taskStatusService.deleteTaskStatus(id, loggedUser.getUsername());
+    public ResponseEntity<Void> delete(@PathVariable Long id, @AuthenticationPrincipal UserDetails loggedUser) {
+        taskStatusService.delete(id, loggedUser.getUsername());
         return ResponseEntity.noContent().build();
     }
 }

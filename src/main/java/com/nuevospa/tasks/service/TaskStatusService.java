@@ -14,13 +14,13 @@ public interface TaskStatusService {
 
     TaskStatusDto findByName(String name);
 
-    TaskStatusDto createTaskStatus(TaskStatusDto dto);
+    TaskStatusDto create(TaskStatusDto dto);
 
-    TaskStatusDto updateTaskStatus(Long id, TaskStatusDto dto, String username);
+    TaskStatusDto update(Long id, TaskStatusDto dto, String username);
 
-    TaskStatusDto patchTaskStatus(Long id, Map<String, Object> changes, String username);
+    TaskStatusDto patch(Long id, Map<String, Object> changes, String username);
 
-    void deleteTaskStatus(Long id, String username);
+    void delete(Long id, String username);
 
     TaskStatusDto entityToDto(TaskStatusEntity entity);
 

@@ -21,6 +21,13 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @AllArgsConstructor
 public class SecurityConfig {
 
+    private static final String[] PUBLIC_ENDPOINTS = {
+            "/api/auth/**",
+            "/swagger-ui/**",
+            "/v3/api-docs/**",
+            "/h2-console/**"
+    };
+
     private final JwtAuthenticationFilter jwtFilter;
 
     @Bean
@@ -28,17 +35,10 @@ public class SecurityConfig {
         return http
                 .headers(h -> h.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
                 .csrf(AbstractHttpConfigurer::disable)
-                //TODO: que es STATELESS
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**", "/swagger-ui/**", "/v3/api-docs/**", "/h2-console/**")
-                        //.hasRole("ADMIN")
+                        .requestMatchers(PUBLIC_ENDPOINTS)
                         .permitAll()
-                        //TODO: check
-                        /*.requestMatchers(HttpMethod.GET, "/tasks/**")
-                        .hasAnyRole("USER", "ADMIN")
-                        .requestMatchers(HttpMethod.POST, "/tasks/**")
-                        .hasRole("ADMIN")*/
                         .anyRequest()
                         .authenticated())
                 .exceptionHandling(config -> config.accessDeniedHandler(new JsonAccessDeniedHandler()))

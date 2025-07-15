@@ -13,7 +13,15 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.net.URI;
 import java.util.List;
@@ -67,10 +75,10 @@ public class TaskController {
                     content = @Content)
     })
     @PostMapping
-    public ResponseEntity<TaskDto> createTask(
-            @Valid @RequestBody TaskDto taskDto, @
-            AuthenticationPrincipal UserDetails loggedUser) {
-        TaskDto created = taskService.createTask(taskDto, loggedUser.getUsername());
+    public ResponseEntity<TaskDto> create(
+            @Valid @RequestBody TaskDto taskDto,
+            @AuthenticationPrincipal UserDetails loggedUser) {
+        TaskDto created = taskService.create(taskDto, loggedUser.getUsername());
         return ResponseEntity
                 .created(URI.create("/api/tasks/" + created.getId()))
                 .body(created);
@@ -88,11 +96,11 @@ public class TaskController {
                     content = @Content)
     })
     @PutMapping("/{id}")
-    public ResponseEntity<TaskDto> updateTask(
+    public ResponseEntity<TaskDto> update(
             @PathVariable Long id,
-            @Valid @RequestBody TaskDto taskDto,
+            @RequestBody TaskDto taskDto,
             @AuthenticationPrincipal UserDetails loggedUser) {
-        TaskDto updated = taskService.updateTask(id, taskDto, loggedUser.getUsername());
+        TaskDto updated = taskService.update(id, taskDto, loggedUser.getUsername());
         return ResponseEntity.ok(updated);
     }
 
@@ -108,10 +116,10 @@ public class TaskController {
                     content = @Content)
     })
     @PatchMapping(value = "/{id}", consumes = "application/merge-patch+json")
-    public ResponseEntity<TaskDto> patchTask(@PathVariable Long id,
-                                             @RequestBody Map<String, Object> changes,
-                                             @AuthenticationPrincipal UserDetails loggedUser) {
-        TaskDto updated = taskService.patchTask(id, changes, loggedUser.getUsername());
+    public ResponseEntity<TaskDto> patch(@PathVariable Long id,
+                                         @RequestBody Map<String, Object> changes,
+                                         @AuthenticationPrincipal UserDetails loggedUser) {
+        TaskDto updated = taskService.patch(id, changes, loggedUser.getUsername());
         return ResponseEntity.ok(updated);
     }
 
@@ -127,8 +135,8 @@ public class TaskController {
                     content = @Content)
     })
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteTask(@PathVariable Long id, @AuthenticationPrincipal UserDetails loggedUser) {
-        taskService.deleteTask(id, loggedUser.getUsername());
+    public ResponseEntity<Void> delete(@PathVariable Long id, @AuthenticationPrincipal UserDetails loggedUser) {
+        taskService.delete(id, loggedUser.getUsername());
         return ResponseEntity.noContent().build();
     }
 }

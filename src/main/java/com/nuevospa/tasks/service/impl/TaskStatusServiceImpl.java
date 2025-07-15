@@ -41,46 +41,34 @@ public class TaskStatusServiceImpl implements TaskStatusService {
     }
 
     @Override
-    public TaskStatusDto createTaskStatus(TaskStatusDto dto) {
+    public TaskStatusDto create(TaskStatusDto dto) {
         TaskStatusEntity entity = new TaskStatusEntity();
         entity.setName(dto.getName());
         return entityToDto(taskStatusRepo.save(entity));
     }
 
-    //TODO: validar campos nulos
     @Override
-    public TaskStatusDto updateTaskStatus(Long id, TaskStatusDto dto, String username) {
+    public TaskStatusDto update(Long id, TaskStatusDto dto, String username) {
         TaskStatusDto taskStatusFound = findById(id);
-        validateTaskStatusRole(username);
         taskStatusFound.setName(dto.getName());
         return entityToDto(taskStatusRepo.save(dtoToEntity(taskStatusFound)));
     }
 
     @Override
-    public TaskStatusDto patchTaskStatus(Long id, Map<String, Object> changes, String username) {
+    public TaskStatusDto patch(Long id, Map<String, Object> changes, String username) {
         TaskStatusDto taskFound = findById(id);
 
-        validateTaskStatusRole(username);
         if (changes.containsKey("name")) {
             taskFound.setName((String) changes.get("name"));
         }
-        //TODO: check campos a actualizar
         return entityToDto(taskStatusRepo.save(dtoToEntity(taskFound)));
     }
 
     //TODO: check cuando esta ligado a tarea
     @Override
-    public void deleteTaskStatus(Long id, String username) {
+    public void delete(Long id, String username) {
         TaskStatusDto taskFound = findById(id);
-        validateTaskStatusRole(username);
         taskStatusRepo.delete(dtoToEntity(taskFound));
-    }
-
-    //TODO: validar admin
-    private void validateTaskStatusRole(String username) {
-        /*if (!taskFound.getUser().getUsername().equals(username)) {
-            throw new AccessDeniedException("No eres dueño de la tarea");
-        }*/
     }
 
     //TODO: mapper
@@ -92,9 +80,9 @@ public class TaskStatusServiceImpl implements TaskStatusService {
     }
 
     public TaskStatusEntity dtoToEntity(TaskStatusDto dto) {
-        return TaskStatusEntity.builder()
-                .id(dto.getId())
-                .name(dto.getName())
-                .build();
+        TaskStatusEntity entity = new TaskStatusEntity();
+        entity.setId(dto.getId());
+        entity.setName(dto.getName());
+        return entity;
     }
 }

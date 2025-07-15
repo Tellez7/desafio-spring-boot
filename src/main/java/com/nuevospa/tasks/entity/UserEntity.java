@@ -1,16 +1,17 @@
 package com.nuevospa.tasks.entity;
 
-//TDO: check
-import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
-@Data
-@Builder
-@AllArgsConstructor
+@Getter
+@Setter
 @NoArgsConstructor
 @Table(name = "usuarios")
 public class UserEntity {
@@ -19,6 +20,6 @@ public class UserEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String username;
-    private String password;   // hash BCrypt
-    private String role;       // p. ej. "ROLE_USER"
+    private String password;
+    private String role;
 }

@@ -53,7 +53,13 @@ public class UserServiceImpl implements UserService {
         UserEntity entity = new UserEntity();
         entity.setUsername(dto.getUsername());
         entity.setPassword(encoder.encode(dto.getPassword()));
-        entity.setRole(dto.getRole());
+
+        if (dto.getRole() != null) {
+            entity.setRole(dto.getRole());
+        } else {
+            //TODO: check enum
+            entity.setRole("USER");
+        }
         return entityToDto(userRepository.save(entity));
     }
 
@@ -69,19 +75,15 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto patch(Long id, Map<String, Object> changes, String username) {
         UserDto userFound = findById(id);
-        //TODO: cambiar por generico
         if (changes.containsKey("username")) {
             userFound.setUsername((String) changes.get("username"));
         }
-
         if (changes.containsKey("password")) {
             userFound.setPassword((String) changes.get("password"));
         }
-
         if (changes.containsKey("role")) {
             userFound.setRole((String) changes.get("role"));
         }
-
         return entityToDto(userRepository.save(dtoToEntity(userFound)));
     }
 
@@ -104,11 +106,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserEntity dtoToEntity(UserDto dto) {
-        return UserEntity.builder()
-                .id(dto.getId())
-                .username(dto.getUsername())
-                .password(dto.getPassword())
-                .role(dto.getRole())
-                .build();
+        UserEntity entity = new UserEntity();
+        entity.setId(dto.getId());
+        entity.setUsername(dto.getUsername());
+        entity.setPassword(dto.getPassword());
+        entity.setRole(dto.getRole());
+        return entity;
     }
 }

@@ -11,10 +11,6 @@ spring:
     hibernate:
       ddl-auto: create
     defer-datasource-initialization: true
-    #TODO:check
-    show-sql: true
-    properties:
-      hibernate.format_sql: true
 
 jwt:
   secret: qM8f5GQ+z9Kc2Daf4mXhz1FBQn2lOj8MeXzKpU3SxGA=

@@ -1,22 +1,19 @@
 package com.nuevospa.tasks.model;
 
-//TODO: check
-import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 @Builder
-@AllArgsConstructor
-@NoArgsConstructor
 public class UserDto {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @NotBlank(message = "El campo username no esta presente")
     private String username;
+    @NotBlank(message = "El campo password no esta presente")
     private String password;
     private String role;
 }
