@@ -70,15 +70,12 @@ public class TaskStatusController {
     @ApiResponses({
             @ApiResponse(responseCode = "201",
                     content = @Content(schema = @Schema(implementation = TaskStatusDto.class))),
-            //TODO: check
             @ApiResponse(responseCode = "400",
                     description = "Datos inválidos",
                     content = @Content)
     })
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
-    //TODO: check
-    //@PreAuthorize("hasRole('ADMIN') or (hasRole('USER') and #id == principal.id)")
     public ResponseEntity<TaskStatusDto> create(@Valid @RequestBody TaskStatusDto taskStatusDto) {
         TaskStatusDto created = taskStatusService.create(taskStatusDto);
         return ResponseEntity

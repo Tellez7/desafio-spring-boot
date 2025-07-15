@@ -75,7 +75,6 @@ public class UserController {
     @ApiResponses({
             @ApiResponse(responseCode = "201",
                     content = @Content(schema = @Schema(implementation = UserDto.class))),
-            //TODO: check
             @ApiResponse(responseCode = "400",
                     description = "Datos inválidos",
                     content = @Content)

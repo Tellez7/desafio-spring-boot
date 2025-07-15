@@ -99,7 +99,6 @@ public class UserServiceImpl implements UserService {
         return UserDto.builder()
                 .id(entity.getId())
                 .username(entity.getUsername())
-                .password(entity.getPassword())
                 .role(entity.getRole())
                 .build();
     }

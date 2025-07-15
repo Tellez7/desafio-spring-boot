@@ -132,7 +132,6 @@ public class TaskServiceImpl implements TaskService {
                 .title(entity.getTitle())
                 .description(entity.getDescription())
                 .status(taskStatusService.findByName(entity.getStatus().getName()))
-                //TODO: mostrar password y role?
                 .user(userService.findByUsername(entity.getUser().getUsername()))
                 .build();
     }

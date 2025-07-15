@@ -6,7 +6,7 @@ VALUES
 
 INSERT INTO usuarios (username, password, role)
 VALUES
-  ('mateo', '$2a$10$7GD/sIj.Aul8302DnYzOE.AjcMBV6xDDsNHSmCzLAfhIBMduF86vS', 'OTHER_ROLE');
+  ('mateo', '$2a$10$7GD/sIj.Aul8302DnYzOE.AjcMBV6xDDsNHSmCzLAfhIBMduF86vS', 'USER');
 
 INSERT INTO tareas (title, description, status_id, user_id)
 VALUES
