@@ -11,6 +11,9 @@ import com.nuevospa.tasks.service.TaskService;
 import com.nuevospa.tasks.service.TaskStatusService;
 import com.nuevospa.tasks.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,18 +28,31 @@ public class TaskServiceImpl implements TaskService {
     private final UserService userService;
 
     @Override
-    public List<TaskDto> findAll() {
-        return taskRepository.findAll()
+    public List<TaskDto> findAllByUsername(int page, int size, String username) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
+        return taskRepository.findByUserUsername(username, pageable)
                 .stream()
                 .map(this::entityToDto)
                 .toList();
     }
 
     @Override
-    public TaskDto findById(Long id) {
-        return taskRepository.findById(id)
+    public TaskDto findById(Long id, String username) {
+        TaskDto taskDto = taskRepository.findById(id)
                 .map(this::entityToDto)
                 .orElseThrow(() -> new ResourceNotFoundException("Tarea " + id + " no encontrada"));
+
+        validateTaskOwner(taskDto, username);
+        return taskDto;
+    }
+
+    @Override
+    public List<TaskDto> findAllByUsernameAndStatus(int page, int size, String username, String status) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
+        return taskRepository.findByUserUsernameAndStatusName(username, status, pageable)
+                .stream()
+                .map(this::entityToDto)
+                .toList();
     }
 
     @Override
@@ -61,10 +77,7 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public TaskDto update(Long id, TaskDto dto, String username) {
-        TaskDto taskFound = findById(id);
-
-        validateTaskOwner(taskFound, username);
-
+        TaskDto taskFound = findById(id, username);
         taskFound.setTitle(dto.getTitle());
         taskFound.setDescription(dto.getDescription());
 
@@ -74,15 +87,12 @@ public class TaskServiceImpl implements TaskService {
         if (dto.getUser() != null) {
             taskFound.setUser(userService.findByUsername(dto.getUser().getUsername()));
         }
-
         return entityToDto(taskRepository.save(dtoToEntity(taskFound)));
     }
 
     @Override
     public TaskDto patch(Long id, Map<String, Object> changes, String username) {
-        TaskDto taskFound = findById(id);
-
-        validateTaskOwner(taskFound, username);
+        TaskDto taskFound = findById(id, username);
 
         if (changes.containsKey("title")) {
             taskFound.setTitle((String) changes.get("title"));
@@ -105,8 +115,7 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public void delete(Long id, String username) {
-        TaskDto taskFound = findById(id);
-        validateTaskOwner(taskFound, username);
+        TaskDto taskFound = findById(id, username);
         taskRepository.delete(dtoToEntity(taskFound));
     }
 

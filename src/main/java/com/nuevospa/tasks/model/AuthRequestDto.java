@@ -3,7 +3,7 @@ package com.nuevospa.tasks.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;
 
-public record AuthRequest(
+public record AuthRequestDto(
 
         @NotBlank
         @JsonProperty("username")

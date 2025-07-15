@@ -1,7 +1,7 @@
 package com.nuevospa.tasks.controller;
 
-import com.nuevospa.tasks.model.AuthRequest;
-import com.nuevospa.tasks.model.AuthResponse;
+import com.nuevospa.tasks.model.AuthRequestDto;
+import com.nuevospa.tasks.model.AuthResponseDto;
 import com.nuevospa.tasks.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +18,7 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/login")
-    public AuthResponse login(@Valid @RequestBody AuthRequest request) {
+    public AuthResponseDto login(@Valid @RequestBody AuthRequestDto request) {
         return authService.authenticate(request.username(), request.password());
     }
 }

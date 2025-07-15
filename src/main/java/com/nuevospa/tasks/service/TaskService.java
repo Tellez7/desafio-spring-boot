@@ -7,9 +7,11 @@ import java.util.Map;
 
 public interface TaskService {
 
-    List<TaskDto> findAll();
+    List<TaskDto> findAllByUsername(int page, int size, String username);
 
-    TaskDto findById(Long id);
+    TaskDto findById(Long id, String username);
+
+    List<TaskDto> findAllByUsernameAndStatus(int page, int size, String username, String status);
 
     TaskDto create(TaskDto dto, String username);
 

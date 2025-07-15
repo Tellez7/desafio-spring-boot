@@ -1,8 +1,8 @@
 package com.nuevospa.tasks.service;
 
-import com.nuevospa.tasks.model.AuthResponse;
+import com.nuevospa.tasks.model.AuthResponseDto;
 
 public interface AuthService {
 
-    AuthResponse authenticate(String username, String rawPassword);
+    AuthResponseDto authenticate(String username, String rawPassword);
 }

@@ -1,6 +1,6 @@
 package com.nuevospa.tasks.service.impl;
 
-import com.nuevospa.tasks.model.AuthResponse;
+import com.nuevospa.tasks.model.AuthResponseDto;
 import com.nuevospa.tasks.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -16,11 +16,11 @@ public class AuthServiceImpl implements AuthService {
     private final JwtServiceImpl jwtService;
 
     @Override
-    public AuthResponse authenticate(String username, String rawPassword) {
+    public AuthResponseDto authenticate(String username, String rawPassword) {
         Authentication auth = authManager.authenticate(new UsernamePasswordAuthenticationToken(username, rawPassword));
         var userDetails = (org.springframework.security.core.userdetails.User) auth.getPrincipal();
 
         String token = jwtService.generateToken(userDetails);
-        return new AuthResponse(token, jwtService.extractExpiration(token));
+        return new AuthResponseDto(token, jwtService.extractExpiration(token));
     }
 }

@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.net.URI;
@@ -42,8 +43,10 @@ public class TaskController {
             description = "Lista de tareas",
             content = @Content(array = @ArraySchema(schema = @Schema(implementation = TaskDto.class))))
     @GetMapping
-    public List<TaskDto> findAll() {
-        return taskService.findAll();
+    public List<TaskDto> findAllByUsername(@RequestParam(defaultValue = "0") int page,
+                                           @RequestParam(defaultValue = "20") int size,
+                                           @AuthenticationPrincipal UserDetails loggedUser) {
+        return taskService.findAllByUsername(page, size, loggedUser.getUsername());
     }
 
     @Operation(
@@ -58,8 +61,24 @@ public class TaskController {
                     content = @Content)
     })
     @GetMapping("/{id}")
-    public ResponseEntity<TaskDto> findById(@PathVariable Long id) {
-        return ResponseEntity.ok(taskService.findById(id));
+    public ResponseEntity<TaskDto> findByIdAndUserUsername(
+            @PathVariable Long id, @AuthenticationPrincipal UserDetails loggedUser) {
+        return ResponseEntity.ok(taskService.findById(id, loggedUser.getUsername()));
+    }
+
+    @Operation(
+            summary = "Listar tareas por estado",
+            description = "Devuelve todas las tareas visibles para el usuario autenticado por estado"
+    )
+    @ApiResponse(responseCode = "200",
+            description = "Lista de tareas por estado",
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = TaskDto.class))))
+    @GetMapping("/status/{status}")
+    public List<TaskDto> findAllByUsernameAndStatus(@RequestParam(defaultValue = "0") int page,
+                                                    @RequestParam(defaultValue = "20") int size,
+                                                    @AuthenticationPrincipal UserDetails loggedUser,
+                                                    @PathVariable String status) {
+        return taskService.findAllByUsernameAndStatus(page, size, loggedUser.getUsername(), status);
     }
 
     @Operation(
@@ -69,7 +88,6 @@ public class TaskController {
     @ApiResponses({
             @ApiResponse(responseCode = "201",
                     content = @Content(schema = @Schema(implementation = TaskDto.class))),
-            //TODO: check
             @ApiResponse(responseCode = "400",
                     description = "Datos inválidos",
                     content = @Content)

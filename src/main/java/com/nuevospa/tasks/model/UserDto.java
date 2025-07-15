@@ -11,9 +11,9 @@ import lombok.Setter;
 public class UserDto {
 
     private Long id;
-    @NotBlank(message = "El campo username no esta presente")
+    @NotBlank
     private String username;
-    @NotBlank(message = "El campo password no esta presente")
+    @NotBlank
     private String password;
     private String role;
 }

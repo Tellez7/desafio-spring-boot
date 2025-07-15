@@ -11,6 +11,6 @@ import lombok.Setter;
 public class TaskStatusDto {
 
     private Long id;
-    @NotBlank(message = "El campo name no esta presente")
+    @NotBlank
     private String name;
 }
