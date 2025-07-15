@@ -1,6 +1,9 @@
 package com.nuevospa.tasks.entity;
 
+import com.nuevospa.tasks.util.TaskStatus;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.EnumType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -19,5 +22,6 @@ public class TaskStatusEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String name;       // "PENDING", "DONE", ...
+    @Enumerated(EnumType.STRING)
+    private TaskStatus name;
 }

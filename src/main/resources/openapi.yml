@@ -1,45 +1,70 @@
 openapi: 3.0.3
 info:
-  title: API Gestor de Tareas
-  version: 1.0.0
+  title: Task Manager API
+  description: REST API para autenticación JWT y gestión de tareas, estados y usuarios.
+  version: "1.0.0"
+
 servers:
-  - url: /api
+  - url: http://localhost:8080/api
+    description: Servidor local
 
 components:
   securitySchemes:
-    jwtAuth:
+    BearerAuth:
       type: http
       scheme: bearer
       bearerFormat: JWT
 
   schemas:
-    # <<< TODO: Check >>>
-    AuthRequest:
+    AuthRequestDto:
       type: object
       required: [ username, password ]
       properties:
         username:
           type: string
-          example: esteban
         password:
           type: string
-          example: admin123
+          format: password
+          writeOnly: true
 
-    AuthResponse:
+    AuthResponseDto:
       type: object
-      required: [ access_token, expires_at ]
       properties:
-        access_token:
+        accessToken:
           type: string
-          description: Token JWT
-        expires_at:
+          description: Token JWT a enviar en el header **Authorization**.
+
+    Role:
+      type: string
+      enum: [ ADMIN, USER ]
+
+    TaskStatusDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
           type: string
-          format: date-time
-          description: Fecha/hora de expiración (ISO-8601)
+          enum: [ TODO, IN_PROGRESS, DONE ]
+
+    UserDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        username:
+          type: string
+        role:
+          $ref: '#/components/schemas/Role'
+        password:
+          type: string
+          format: password
+          writeOnly: true
 
     TaskDto:
       type: object
-      required: [ title, statusId ]
       properties:
         id:
           type: integer
@@ -48,34 +73,52 @@ components:
           type: string
         description:
           type: string
-        statusId:
-          type: integer
-          format: int64
+        status:
+          $ref: '#/components/schemas/TaskStatusDto'
+        user:
+          $ref: '#/components/schemas/UserDto'
+
+security:
+  - BearerAuth: [ ]
 
 paths:
   /auth/login:
     post:
-      summary: Autenticarse y recibir JWT
+      summary: Iniciar sesión y obtener un JWT
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AuthRequest'   # ← ahora existe
+              $ref: '#/components/schemas/AuthRequestDto'
       responses:
-        '200':
-          description: Token JWT
+        "200":
+          description: Autenticación exitosa
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AuthResponse' # ← ahora existe
+                $ref: '#/components/schemas/AuthResponseDto'
+        "400":
+          description: Credenciales inválidas
 
   /tasks:
     get:
-      security: [ { jwtAuth: [ ] } ]
-      summary: Listar tareas
+      summary: Listar tareas visibles para el usuario autenticado
+      security:
+        - BearerAuth: [ ]
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 0
+        - name: size
+          in: query
+          schema:
+            type: integer
+            default: 20
       responses:
-        '200':
+        "200":
           description: Lista de tareas
           content:
             application/json:
@@ -84,8 +127,9 @@ paths:
                 items:
                   $ref: '#/components/schemas/TaskDto'
     post:
-      security: [ { jwtAuth: [ ] } ]
-      summary: Crear tarea
+      summary: Crear una nueva tarea
+      security:
+        - BearerAuth: [ ]
       requestBody:
         required: true
         content:
@@ -93,5 +137,362 @@ paths:
             schema:
               $ref: '#/components/schemas/TaskDto'
       responses:
-        '201':
-          description: Creada
+        "201":
+          description: Tarea creada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskDto'
+        "400":
+          description: Datos inválidos
+
+  /tasks/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+    get:
+      summary: Obtener una tarea por ID
+      security:
+        - BearerAuth: [ ]
+      responses:
+        "200":
+          description: Tarea encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskDto'
+        "404":
+          description: Tarea no encontrada
+    put:
+      summary: Reemplazar una tarea
+      security:
+        - BearerAuth: [ ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TaskDto'
+      responses:
+        "200":
+          description: Tarea actualizada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskDto'
+        "404":
+          description: Tarea no encontrada
+    patch:
+      summary: Actualizar parcialmente una tarea (JSON Merge Patch)
+      security:
+        - BearerAuth: [ ]
+      requestBody:
+        required: true
+        content:
+          application/merge-patch+json:
+            schema:
+              type: object
+      responses:
+        "200":
+          description: Tarea actualizada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskDto'
+        "404":
+          description: Tarea no encontrada
+    delete:
+      summary: Eliminar una tarea
+      security:
+        - BearerAuth: [ ]
+      responses:
+        "204":
+          description: Tarea eliminada
+        "404":
+          description: Tarea no encontrada
+
+  /tasks/status/{status}:
+    parameters:
+      - name: status
+        in: path
+        required: true
+        schema:
+          type: string
+          enum: [ TODO, IN_PROGRESS, DONE ]
+    get:
+      summary: Listar tareas por estado para el usuario autenticado
+      security:
+        - BearerAuth: [ ]
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 0
+        - name: size
+          in: query
+          schema:
+            type: integer
+            default: 20
+      responses:
+        "200":
+          description: Lista de tareas
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TaskDto'
+
+  /task-statuses:
+    get:
+      summary: Listar todos los estados de tarea
+      security:
+        - BearerAuth: [ ]
+      responses:
+        "200":
+          description: Lista de estados
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TaskStatusDto'
+    post:
+      summary: Crear un nuevo estado (solo ADMIN)
+      security:
+        - BearerAuth: [ ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TaskStatusDto'
+      responses:
+        "201":
+          description: Estado creado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskStatusDto'
+        "400":
+          description: Datos inválidos
+
+  /task-statuses/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+    get:
+      summary: Obtener estado por ID
+      security:
+        - BearerAuth: [ ]
+      responses:
+        "200":
+          description: Estado encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskStatusDto'
+        "404":
+          description: Estado no encontrado
+    put:
+      summary: Reemplazar un estado (solo ADMIN)
+      security:
+        - BearerAuth: [ ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TaskStatusDto'
+      responses:
+        "200":
+          description: Estado actualizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskStatusDto'
+        "404":
+          description: Estado no encontrado
+    patch:
+      summary: Actualizar parcialmente un estado (JSON Merge Patch, solo ADMIN)
+      security:
+        - BearerAuth: [ ]
+      requestBody:
+        required: true
+        content:
+          application/merge-patch+json:
+            schema:
+              type: object
+      responses:
+        "200":
+          description: Estado actualizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskStatusDto'
+        "404":
+          description: Estado no encontrado
+    delete:
+      summary: Eliminar un estado (solo ADMIN)
+      security:
+        - BearerAuth: [ ]
+      responses:
+        "204":
+          description: Estado eliminado
+        "404":
+          description: Estado no encontrado
+
+  /users:
+    get:
+      summary: Listar usuarios (solo ADMIN)
+      security:
+        - BearerAuth: [ ]
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 0
+        - name: size
+          in: query
+          schema:
+            type: integer
+            default: 20
+      responses:
+        "200":
+          description: Lista de usuarios
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserDto'
+    post:
+      summary: Crear usuario (solo ADMIN)
+      security:
+        - BearerAuth: [ ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserDto'
+      responses:
+        "201":
+          description: Usuario creado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDto'
+        "400":
+          description: Datos inválidos
+
+  /users/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+    get:
+      summary: Obtener usuario por ID (solo ADMIN)
+      security:
+        - BearerAuth: [ ]
+      responses:
+        "200":
+          description: Usuario encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDto'
+        "404":
+          description: Usuario no encontrado
+    put:
+      summary: Reemplazar un usuario (solo ADMIN)
+      security:
+        - BearerAuth: [ ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserDto'
+      responses:
+        "200":
+          description: Usuario actualizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDto'
+        "404":
+          description: Usuario no encontrado
+    patch:
+      summary: Actualizar parcialmente un usuario (JSON Merge Patch, solo ADMIN)
+      security:
+        - BearerAuth: [ ]
+      requestBody:
+        required: true
+        content:
+          application/merge-patch+json:
+            schema:
+              type: object
+      responses:
+        "200":
+          description: Usuario actualizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDto'
+        "404":
+          description: Usuario no encontrado
+    delete:
+      summary: Eliminar un usuario (solo ADMIN)
+      security:
+        - BearerAuth: [ ]
+      responses:
+        "204":
+          description: Usuario eliminado
+        "404":
+          description: Usuario no encontrado
+
+  /users/role/{role}:
+    parameters:
+      - name: role
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/Role'
+    get:
+      summary: Listar usuarios por rol (solo ADMIN)
+      security:
+        - BearerAuth: [ ]
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 0
+        - name: size
+          in: query
+          schema:
+            type: integer
+            default: 20
+      responses:
+        "200":
+          description: Lista de usuarios
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserDto'
