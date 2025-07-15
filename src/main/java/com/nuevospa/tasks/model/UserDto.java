@@ -6,13 +6,17 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.nuevospa.tasks.util.Role;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @JsonInclude(Include.NON_NULL)
 public class UserDto {
 

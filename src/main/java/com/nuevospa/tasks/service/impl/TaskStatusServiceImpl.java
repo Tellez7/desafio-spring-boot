@@ -16,11 +16,11 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class TaskStatusServiceImpl implements TaskStatusService {
 
-    private final TaskStatusRepository taskStatusRepo;
+    private final TaskStatusRepository taskStatusRepository;
 
     @Override
     public List<TaskStatusDto> findAll() {
-        return taskStatusRepo.findAll()
+        return taskStatusRepository.findAll()
                 .stream()
                 .map(this::entityToDto)
                 .toList();
@@ -28,14 +28,14 @@ public class TaskStatusServiceImpl implements TaskStatusService {
 
     @Override
     public TaskStatusDto findById(Long id) {
-        return taskStatusRepo.findById(id)
+        return taskStatusRepository.findById(id)
                 .map(this::entityToDto)
                 .orElseThrow(() -> new ResourceNotFoundException("Estado " + id + " no encontrado"));
     }
 
     @Override
     public TaskStatusDto findByName(String name) {
-        return taskStatusRepo.findByName(TaskStatus.valueOf(name))
+        return taskStatusRepository.findByName(TaskStatus.valueOf(name))
                 .map(this::entityToDto)
                 .orElseThrow(() -> new ResourceNotFoundException("Estado " + name + " no encontrado"));
     }
@@ -44,14 +44,14 @@ public class TaskStatusServiceImpl implements TaskStatusService {
     public TaskStatusDto create(TaskStatusDto dto) {
         TaskStatusEntity entity = new TaskStatusEntity();
         entity.setName(dto.getName());
-        return entityToDto(taskStatusRepo.save(entity));
+        return entityToDto(taskStatusRepository.save(entity));
     }
 
     @Override
     public TaskStatusDto update(Long id, TaskStatusDto dto, String username) {
         TaskStatusDto taskStatusFound = findById(id);
         taskStatusFound.setName(dto.getName());
-        return entityToDto(taskStatusRepo.save(dtoToEntity(taskStatusFound)));
+        return entityToDto(taskStatusRepository.save(dtoToEntity(taskStatusFound)));
     }
 
     @Override
@@ -61,13 +61,13 @@ public class TaskStatusServiceImpl implements TaskStatusService {
         if (changes.containsKey("name")) {
             taskFound.setName(TaskStatus.valueOf((String) changes.get("name")));
         }
-        return entityToDto(taskStatusRepo.save(dtoToEntity(taskFound)));
+        return entityToDto(taskStatusRepository.save(dtoToEntity(taskFound)));
     }
 
     @Override
     public void delete(Long id, String username) {
         TaskStatusDto taskFound = findById(id);
-        taskStatusRepo.delete(dtoToEntity(taskFound));
+        taskStatusRepository.delete(dtoToEntity(taskFound));
     }
 
     public TaskStatusDto entityToDto(TaskStatusEntity entity) {
