@@ -70,3 +70,26 @@ Se evaluará la solución en función de los siguientes criterios:
 - Uso adecuado de Java 17, Spring Boot 3.4.x, H2, JWT, OpenAPI y Swagger.
 - Claridad y completitud de la documentación.
 - **Puntos extras si la generación de la API se realizo mediante API First**
+
+## Explicacion_logica:
+### Autenticación:
+- /api/auth/login valida que el login sea correcto
+- Se hace una validacion por username y password, si el usuario esta en bd hace login ya arroja el token, de lo contrario lanza una exception, ya sea si no ecncuentra el usuario o por credenciales incorrectas
+- Se cuenta con un enum que valida 2 roles [ADMIN, USER]
+
+### Task:
+- /api/tasks hay varios endpoints para consulta y escritura, se pueden listar todas las tareas, por id o por estado del usuario loggeado
+- Ambos roles de usuario pueden visualizar sus tareas, siempre y cuando el login les de acceso
+- Las tareas no se comparten, unicas para cada usuario
+
+### TaskStatus:
+- /api/statuses hay varios endpoints para consulta y escritura
+- Para los endpoints de lectura, ambos roles tienen acceso, para escritura solo el rol ADMIN
+- Se cuenta con un enum para solo recibir 3 estados [TODO, IN_PROGRESS, DONE]
+
+### User:
+- /api/users hay varios endpoints para consulta y escritura
+- Para cualquier endpoint solo el usuario con rol ADMIN tiene acceso
+- se precargan 2 usuarios [esteban:ADMIN, mateo:USER]
+
+NOTA: Cabe resaltar que cada endpoint tiene su propia validacion de campos, campo no encontrado, acualizado, obtenido, etc
