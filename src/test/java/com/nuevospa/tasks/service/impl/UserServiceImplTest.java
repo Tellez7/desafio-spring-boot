@@ -8,9 +8,15 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -24,15 +30,34 @@ import static org.mockito.Mockito.when;
 class UserServiceImplTest {
 
     @Mock
-    UserRepository userRepository;
-    @Mock
-    PasswordEncoder encoder;
+    private UserRepository userRepository;
 
-    UserServiceImpl userService;
+    @Mock
+    private PasswordEncoder encoder;
+
+    private UserServiceImpl userService;
 
     @BeforeEach
     void setUp() {
         userService = new UserServiceImpl(userRepository, encoder);
+    }
+
+    @Test
+    void findAll() {
+        List<UserEntity> userEntities = new ArrayList<>();
+
+        UserEntity userEntity = new UserEntity();
+        userEntities.add(userEntity);
+
+        Pageable pageReq = PageRequest.of(0, 20);
+
+        Page<UserEntity> page = new PageImpl<>(userEntities, pageReq, userEntities.size());
+
+        when(userRepository.findAll(any(Pageable.class))).thenReturn(page);
+
+        List<UserDto> dtos = userService.findAll(1, 1);
+
+        assertNotNull(dtos);
     }
 
     @Test
@@ -61,6 +86,24 @@ class UserServiceImplTest {
         UserDto dto = userService.findById(1L);
 
         assertNotNull(dto);
+    }
+
+    @Test
+    void findAllByRole() {
+        List<UserEntity> userEntities = new ArrayList<>();
+
+        UserEntity userEntity = new UserEntity();
+        userEntities.add(userEntity);
+
+        Pageable pageReq = PageRequest.of(0, 20);
+
+        Page<UserEntity> page = new PageImpl<>(userEntities, pageReq, userEntities.size());
+
+        when(userRepository.findByRole(any(Role.class), any(Pageable.class))).thenReturn(page);
+
+        List<UserDto> dtos = userService.findAllByRole(1, 1, Role.ADMIN);
+
+        assertNotNull(dtos);
     }
 
     @Test

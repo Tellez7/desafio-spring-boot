@@ -35,13 +35,15 @@ import static org.mockito.Mockito.when;
 class TaskServiceImplTest {
 
     @Mock
-    TaskRepository taskRepository;
-    @Mock
-    TaskStatusService taskStatusService;
-    @Mock
-    UserService userService;
+    private TaskRepository taskRepository;
 
-    TaskServiceImpl taskService;
+    @Mock
+    private TaskStatusService taskStatusService;
+
+    @Mock
+    private UserService userService;
+
+    private TaskServiceImpl taskService;
 
     @BeforeEach
     void setUp() {

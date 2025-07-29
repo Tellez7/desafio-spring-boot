@@ -14,7 +14,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Date;
@@ -27,19 +26,18 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(
         controllers = AuthController.class,
         excludeFilters = @ComponentScan.Filter(
-                type = FilterType.ASSIGNABLE_TYPE,
-                classes = JwtAuthenticationFilter.class))
-@TestPropertySource(properties = "api.path-auth=/api/auth")
+                type = FilterType.ASSIGNABLE_TYPE, classes = JwtAuthenticationFilter.class))
 class AuthControllerTest {
 
     @Autowired
-    MockMvc mvc;
+    private MockMvc mvc;
+
     @Autowired
-    ObjectMapper mapper;
+    private ObjectMapper mapper;
 
     @SuppressWarnings("removal")
     @MockBean
-    AuthService authService;
+    private AuthService authService;
 
     @Test
     void login_ok() throws Exception {

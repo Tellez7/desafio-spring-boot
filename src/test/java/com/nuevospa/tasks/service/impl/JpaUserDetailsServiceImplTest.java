@@ -18,9 +18,10 @@ import static org.mockito.Mockito.when;
 @SpringBootTest
 class JpaUserDetailsServiceImplTest {
 
-    JpaUserDetailsServiceImpl jpaUserDetailsService;
+    private JpaUserDetailsServiceImpl jpaUserDetailsService;
+
     @Mock
-    UserRepository userRepository;
+    private UserRepository userRepository;
 
     @BeforeEach
     void setUp() {

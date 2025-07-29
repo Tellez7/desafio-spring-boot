@@ -1,0 +1,23 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:tasksdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  h2:
+    console:
+      enabled: true
+  jpa:
+    hibernate:
+      ddl-auto: create
+    defer-datasource-initialization: true
+
+jwt:
+  secret: qM8f5GQ+z9Kc2Daf4mXhz1FBQn2lOj8MeXzKpU3SxGA=
+  expiration: 3600000  # 1 hora
+
+api:
+  path-auth: /api/auth
+  path-tasks: /api/tasks
+  path-task-statuses: /api/statuses
+  path-users: /api/users

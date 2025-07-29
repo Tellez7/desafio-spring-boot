@@ -11,6 +11,7 @@ import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -23,13 +24,25 @@ import static org.mockito.Mockito.when;
 class TaskStatusServiceImplTest {
 
     @Mock
-    TaskStatusRepository taskStatusRepository;
+    private TaskStatusRepository taskStatusRepository;
 
-    TaskStatusService taskStatusService;
+    private TaskStatusService taskStatusService;
 
     @BeforeEach
     void setUp() {
         taskStatusService = new TaskStatusServiceImpl(taskStatusRepository);
+    }
+
+    @Test
+    void findAllByUsername() {
+        TaskStatusEntity statusEntity = new TaskStatusEntity();
+        statusEntity.setName(TaskStatus.TODO);
+
+        when(taskStatusRepository.findAll()).thenReturn(List.of(statusEntity));
+
+        List<TaskStatusDto> dtos = taskStatusService.findAll();
+
+        assertNotNull(dtos);
     }
 
     @Test
